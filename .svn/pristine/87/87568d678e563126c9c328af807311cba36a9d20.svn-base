@@ -1,0 +1,15 @@
+var app = new Vue({
+    el: '#app',
+    data: {
+        username: '',
+        password: ''
+    },
+    mounted: function () {
+
+    },
+    methods: {
+        login() {
+            alert(this.username + "," + this.password)
+        }
+    }
+})

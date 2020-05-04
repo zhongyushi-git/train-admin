@@ -1,0 +1,295 @@
+var app = new Vue({
+	el: '#app',
+	//数据区
+	data: {
+		json: {
+			class_id: '',
+			name: '',
+			sno: '',
+			size: 10,
+			page: 1
+		},
+		class_options: [],
+		sex_options: [{
+			value: '0',
+			label: '男'
+		}, {
+			value: '1',
+			label: '女'
+		}],
+		studentData: [],
+		total: 0,
+		selectOptions: [], //获取多选按钮选中的数据
+		dialogVisible: false, //弹框是否显示
+		isImport: false,
+		labelPosition: 'right', //弹框中文字的显示方式,居右
+		form: {
+			sno: '',
+			name: '',
+			classes: '',
+			phone: '',
+			email: '',
+			sex: ''
+		},
+		fileList: []
+	},
+	//初始化区
+	mounted: function() {
+		this.getClassList()
+	},
+	// 定义方法区
+	methods: {
+		// 获取班级信息
+		getClassList() {
+			var that = this
+			axios.get(WebAPI.manage + 'class/getClassList').then(function(res) {
+				that.class_options = res.data
+			}, function(err) {
+				console.log(err)
+			})
+		},
+		//搜索按钮
+		search(level) {
+			var that = this
+			var data = that.json
+			if (data.class_id == null || data.class_id == '') {
+				this.$message({
+					message: '请先选择班级',
+					type: 'warning',
+					showClose: true,
+				});
+				return
+			}
+			//默认点击按钮搜索,设置当前页为第一页,否则就是当前页
+			if (level == 0) {
+				data.page = 1
+				that.total = 0 //刷新分页
+			}
+			axios.get(WebAPI.manage + 'student/getStudentListByAdmin?class_id=' + data.class_id + '&name=' + data.name +
+					'&sno=' + data.sno + '&page=' + data.page + '&size=' + data.size)
+				.then(function(res) {
+					that.total = res.data.count
+					that.studentData = res.data.data
+				}, function(err) {
+					console.log(err)
+				})
+		},
+		//每页条数发送改变
+		handleSizeChange(val) {
+			this.json.size = val
+			this.search(1)
+		},
+		//当前页发生改变
+		handleCurrentChange(val) {
+			this.json.page = val
+			this.search(1)
+		},
+		//重置按钮
+		clear() {
+			this.json = {
+				class_id: '',
+				name: '',
+				sno: '',
+				size: 10,
+				page: 1
+			}
+		},
+		//修改按钮,负责查询数据,打开弹框
+		updateStuInfo() {
+			var len = this.selectOptions.length
+			if (len == 0) {
+				this.$message({
+					message: '请选择一行数据',
+					type: 'warning',
+					showClose: true,
+				});
+				return
+			} else if (len > 1) {
+				this.$message({
+					message: '只能选择一行数据',
+					type: 'warning',
+					showClose: true,
+				});
+				return
+			}
+			var that = this
+			axios.get(WebAPI.manage + 'student/getOneByAdmin?sno=' + this.selectOptions[0].sno).then(function(res) {
+				that.form = res.data
+			}, function(err) {
+				console.log(err)
+			})
+			this.dialogVisible = true
+		},
+		//删除
+		deleteStuInfo() {
+			var snoArr = []
+			this.selectOptions.forEach(function(item, index) {
+				snoArr.push(item.sno);
+			})
+			//base64加密
+			snoArr = Base64.encode(snoArr)
+			var that = this
+			axios.delete(WebAPI.manage + 'student/deleteByAdmin/' + snoArr).then(function(res) {
+				if (res.data.code == 200) {
+					that.$message({
+						message: '删除成功',
+						type: 'success',
+						showClose: true,
+					});
+					that.search(1)
+				} else {
+					that.$message({
+						message: res.data.msg,
+						type: 'error',
+						showClose: true,
+					});
+				}
+			}, function(err) {
+				console.log(err)
+			})
+		},
+		//删除前的检查
+		checkDel() {
+			var len = this.selectOptions.length
+			if (len == 0) {
+				this.$message({
+					message: '至少选择一行数据',
+					type: 'warning',
+					showClose: true,
+				});
+				return
+			}
+			this.$confirm('确认删除 '+len+' 条数据吗?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				this.deleteStuInfo();
+			}).catch(() => {});
+		},
+		changeFile(file) {
+			this.fileList.push(file)
+		},
+		//导入按钮,文件上传
+		importStuInfo() {
+			if (this.fileList.length == 0) {
+				this.$message({
+					message: "请选择一个excel文件",
+					type: 'warning',
+					showClose: true,
+				});
+				return;
+			}
+			var file = this.fileList[0]
+			if (!this.beforeHandle(file)) {
+				return
+			}
+			var param = new FormData()
+			this.isImport = false
+			var that = this
+			param.append("file", file.raw)
+			axios.post(WebAPI.manage + 'student/upload', param).then(function(res) {
+				if (res.data.code == 200) {
+					that.$message({
+						message: '导入成功',
+						type: 'success',
+						showClose: true,
+					});
+				} else {
+					that.$message({
+						message: res.data.msg,
+						type: 'error',
+						showClose: true,
+					});
+				}
+			}, function(err) {
+				console.log(err)
+			})
+		},
+		//获取多选按钮选中的数据
+		handleSelectionChange(val) {
+			this.selectOptions = val
+		},
+		//点击行触发，选中或不选中复选框
+		handleRowClick(row, column, event) {
+			this.$refs.multipleTable.toggleRowSelection(row);
+		},
+		//保存修改的数据
+		saveForm() {
+			if(!checkPhone(this.form.phone)){
+				this.$message({
+					message: '请输入正确的手机号',
+					type: 'warning',
+					showClose: true,
+				});
+				return;
+			}
+			if(!checkEmail(this.form.email)){
+				this.$message({
+					message: '请输入正确的邮箱',
+					type: 'warning',
+					showClose: true,
+				});
+				return;
+			}
+			var that = this
+			axios.post(WebAPI.manage + 'student/updateByAdmin',
+					that.form, {
+						headers: {
+							'Content-Type': 'application/json;charset=UTF-8'
+						} //加上头部信息
+					},
+				)
+				.then(function(res) {
+					if (res.data.code == 200) {
+						that.dialogVisible = false
+						that.$message({
+							message: '修改成功',
+							type: 'success',
+							showClose: true,
+						});
+						that.search(1)
+					} else {
+						that.$message({
+							message: res.data.msg,
+							type: 'error',
+							showClose: true,
+						});
+					}
+				}, function(err) {
+					console.log(err)
+				})
+		},
+		//关闭时清空文件列表
+		clearFileList() {
+			if (!this.isImport) {
+				this.fileList = []
+			}
+		},
+		//导入之前进行验证
+		beforeHandle(file) {
+			var flag = true
+			var xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+			var xls = "application/vnd.ms-excel";
+			var size = file.raw.size / 1024 / 1024 < 10; //定义文件大小不能大于10M
+			if (file.raw.type != xls && file.raw.type != xlsx) {
+				this.$message({
+					message: "只能选择excel类型文件!请点击×删除此文件后重新上传",
+					type: 'warning',
+					showClose: true,
+				});
+				flag = false
+			} else if (!size) {
+				this.$message({
+					message: "文件大小不能超过10M,请点击×删除此文件后重新上传",
+					type: 'warning',
+					showClose: true,
+				});
+				flag = false
+			}
+			return flag
+		},
+
+	}
+
+});

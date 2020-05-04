@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>学生信息管理</title>
+    <link rel="stylesheet" href="../../js/element/index.css">
+    <script src="../../js/vue/vue.js"></script>
+    <script src="../../js/vue/axios.min.js"></script>
+    <script src="../../js/element/index.js"></script>
+    <style>
+        .text-title {
+            line-height: 32px;
+            float: right;
+        }
+
+        .right {
+            float: right;
+        }
+
+        .el-form-item {
+            margin-bottom: 10px;
+        }
+
+        .el-dialog__body {
+            padding: 10px 20px;
+        }
+
+        .el-table td, .el-table th {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <!-- 搜索栏 -->
+    <el-row>
+        <el-col :span="1">
+            <span class="text-title">班级：</span>
+        </el-col>
+        <el-col :span="3">
+            <el-select size="small" v-model="json.class_id" placeholder="请选择">
+                <el-option
+                        v-for="item in class_options"
+                        :key="item.class_id"
+                        :label="item.class_name"
+                        :value="item.class_id">
+                </el-option>
+            </el-select>
+        </el-col>
+        <el-col :span="2">
+            <span class="text-title">姓名：</span>
+        </el-col>
+        <el-col :span="3">
+            <el-input size="small" v-model="json.name" placeholder="请输入姓名"></el-input>
+        </el-col>
+        <el-col :span="2">
+            <span class="text-title">学号：</span>
+        </el-col>
+        <el-col :span="3">
+            <el-input size="small" v-model="json.sno" placeholder="请输入学号"></el-input>
+        </el-col>
+        <el-col :span="1" style="width: 15px">
+            &nbsp;
+        </el-col>
+        <el-col :span="9">
+            <el-button type="primary" size="small" @click="search(0)">查询</el-button>
+            <el-button size="small" @click="clear">重置</el-button>
+            <el-button type="success" size="small" @click="updateStuInfo">修改</el-button>
+            <el-button type="danger" size="small" @click="checkDel">删除</el-button>
+            <el-button type="warning" size="small" @click="isImport=true">导入</el-button>
+            <el-button type="info" size="small" @click="beforeResetPwd">密码重置</el-button>
+        </el-col>
+    </el-row>
+    <br>
+    <!-- 表格栏 -->
+    <el-row>
+        <el-table
+                ref="multipleTable"
+                :data="studentData"
+                stripe
+                border
+                max-height="430px"
+                size="small"
+                @selection-change="handleSelectionChange"
+                @row-click="handleRowClick"
+                style="width: 100%">
+            <el-table-column
+                    type="selection"
+                    width="55">
+            </el-table-column>
+            <el-table-column
+                    prop="sno"
+                    label="学号"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="name"
+                    label="姓名"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="sex"
+                    label="性别"
+                    width="80">
+            </el-table-column>
+            <el-table-column
+                    prop="classes"
+                    label="班级">
+            </el-table-column>
+            <el-table-column
+                    prop="phone"
+                    label="电话">
+            </el-table-column>
+            <el-table-column
+                    prop="email"
+                    label="邮箱">
+            </el-table-column>
+        </el-table>
+    </el-row>
+    <!-- 分页 -->
+    <el-row>
+        <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="1"
+                :page-sizes="[10,20,50,100]"
+                :page-size="10"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total">
+        </el-pagination>
+    </el-row>
+
+    <!-- 弹框 -->
+    <el-dialog title="修改学生信息" :visible.sync="dialogVisible" width="30%">
+        <el-form :label-position="labelPosition" :model="form" label-width="60px">
+            <el-form-item label="学号:">
+                <el-input size="small" v-model="form.sno" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="姓名:">
+                <el-input size="small" v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item label="性别:">
+                <el-select size="small" v-model="form.sex" style="width: 290px;">
+                    <el-option
+                            v-for="item in sex_options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="班级:">
+                <el-select size="small" v-model="form.classes" style="width: 290px;">
+                    <el-option
+                            v-for="item in class_options"
+                            :key="item.class_id"
+                            :label="item.class_name"
+                            :value="item.class_id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="电话:">
+                <el-input size="small" v-model="form.phone"></el-input>
+            </el-form-item>
+            <el-form-item label="邮箱:">
+                <el-input size="small" v-model="form.email"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" size="small" @click="saveForm">确 定</el-button>
+        </div>
+    </el-dialog>
+    <!-- 文件上传弹框 -->
+    <el-dialog title="导入excel文件" :visible.sync="isImport" width="30%" @close="clearFileList">
+        <el-upload
+                class="upload-demo"
+                ref="upload"
+                action=" "
+                accept=".xls,.xlsx"
+                :limit="1"
+                :on-change="changeFile"
+                :file-list="fileList"
+                :auto-upload="false">
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <el-button type="primary" size="small" @click="importStuInfo">确定导入</el-button>
+        </el-upload>
+    </el-dialog>
+</div>
+</body>
+<script src="../../js/config/config.js"></script>
+<script src="../../js/config/tool.js"></script>
+<script src="../js/student-manage.js"></script>
+</html>

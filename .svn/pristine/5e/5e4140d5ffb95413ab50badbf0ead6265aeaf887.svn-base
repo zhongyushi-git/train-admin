@@ -1,0 +1,38 @@
+var app = new Vue({
+    el: '#app',
+    data: {
+		form:{
+			username: '',
+			password: ''
+		}
+       
+    },
+    mounted: function () {
+
+    },
+    methods: {
+        login() {
+			var that = this
+            axios.post(WebAPI.manage + 'login/adminLogin',
+                that.form, {
+                headers: {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                } //加上头部信息
+            })
+                .then(res => {
+                    if (res.data.code == 200) {
+						localStorage.setItem("adminUser",this.form.username)
+                        window.location.href='index.html'
+                    } else {
+                        that.$message({
+                            message: res.data.msg,
+                            type: 'error',
+                            showClose: true,
+                        });
+                    }
+                }, err => {
+                    console.log(err)
+                })
+        }
+    }
+})

@@ -1,0 +1,23 @@
+var WebAPI = {
+    'student': '../../../training/student/',
+    'teacher': '../../../training/teacher/',
+    'engineer': '../../../training/engineer/',
+    'instructor': '../../../training/instructor/',
+    'manage': '../../../training/manage/',
+}
+var loginUrl = 'login.html'
+var username = localStorage.getItem("adminUser")
+var pathname = location.pathname
+if (username == null) {
+	if (!pathname.endsWith("login.html")) {
+		var href = loginUrl;
+		if (!pathname.endsWith("index.html")) {
+			href = '../../'+loginUrl
+		}
+		window.location.href = href
+	}
+}
+function exit() {
+	localStorage.clear()
+	window.location.href = loginUrl
+}

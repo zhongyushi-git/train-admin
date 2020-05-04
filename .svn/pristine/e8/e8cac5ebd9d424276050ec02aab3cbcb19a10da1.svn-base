@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>实训报告管理</title>
+		<link rel="stylesheet" href="../../js/element/index.css">
+		<script src="../../js/vue/vue.js"></script>
+		<script src="../../js/vue/axios.min.js"></script>
+		<script src="../../js/element/index.js"></script>
+		<style>
+			.text-title{
+				line-height: 32px;
+				float: right;
+			}
+			.right{
+				float: right;
+			}
+			.el-form-item {
+			    margin-bottom: 10px;
+			}
+			.el-dialog__body {
+			    padding: 10px 20px;
+			}
+			.el-table td, .el-table th{
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<!-- 搜索栏 -->
+			<el-row>
+				<el-col :span="1">
+					<span class="text-title">学期：</span>
+				</el-col>
+				<el-col :span="3">
+					<el-select size="small" v-model="json.term_id" placeholder="请选择">
+						<el-option 
+							v-for="item in term_options" 
+							:key="item.term_id" 
+							:label="item.term" 
+							:value="item.term_id">
+						</el-option>
+					</el-select>
+				</el-col>
+				<el-col :span="1">
+					<span class="text-title">班级：</span>
+				</el-col>
+				<el-col :span="3">
+					<el-select size="small" v-model="json.class_id" placeholder="请选择">
+						<el-option 
+							v-for="item in class_options" 
+							:key="item.class_id" 
+							:label="item.class_name" 
+							:value="item.class_id">
+						</el-option>
+					</el-select>
+				</el-col>
+				<el-col :span="1">
+					<span class="text-title">姓名：</span>
+				</el-col>
+				<el-col :span="3">
+					<el-input size="small" v-model="json.name" placeholder="请输入姓名"></el-input>
+				</el-col>
+				<el-col :span="1">
+					<span class="text-title">学号：</span>
+				</el-col>
+				<el-col :span="3">
+					<el-input size="small" v-model="json.sno" placeholder="请输入学号"></el-input>
+				</el-col>
+				<el-col :span="1" style="width: 15px;">&nbsp;</el-col>
+				<el-col :span="5">
+					<el-button type="primary" size="small" @click="search(0)">查询</el-button>
+					<el-button type="warning" size="small" @click="clear">重置</el-button>
+					<el-button type="success" size="small" @click="download">下载</el-button>
+					<el-button type="danger" size="small" @click="checkDel">删除</el-button>
+				</el-col>
+			</el-row>
+			<br>
+			<!-- 表格栏 -->
+			<el-row>
+				 <el-table 
+				      ref="multipleTable"
+				      :data="datas"
+					  stripe
+					  border
+					  max-height="380px"
+					  size="small"
+					  @selection-change="handleSelectionChange"
+					  @row-click="handleRowClick"
+				      style="width: 100%">
+					  <el-table-column
+					    type="selection"
+					    width="50">
+					  </el-table-column> 
+					 <el-table-column
+						v-if="false"
+					  	prop="file_id"
+					  	label="id">
+					  </el-table-column>
+					  <el-table-column
+				        prop="sno"
+				        label="学号"
+						width="120">
+				      </el-table-column>
+				      <el-table-column
+				        prop="name"
+				        label="姓名"
+						width="120">
+				      </el-table-column>
+					  <el-table-column
+					    prop="classes"
+					    label="班级"
+						width="120">
+					  </el-table-column>
+					  <el-table-column
+					  	prop="term_id"
+					  	label="学期"
+						 width="170">
+					  </el-table-column>
+					  <el-table-column
+						prop="time"
+						label="上传时间" 
+						width="150">
+					  </el-table-column>
+					  <el-table-column
+					  	prop="size"
+					  	label="文件大小(KB)" 
+						width="120">
+					  </el-table-column>
+					 <el-table-column
+					   prop="old_name"
+					   label="文件原名"
+					   width="200">
+					 </el-table-column>
+					 <el-table-column
+					   prop="new_name"
+					   label="文件新名"
+					   width="200">
+					 </el-table-column>
+					 <el-table-column
+					   prop="url"
+					   label="存储位置"
+					   width="200">
+					 </el-table-column>
+				    </el-table>
+			</el-row>
+			<!-- 分页 -->
+			<el-row>
+				<el-pagination
+					@size-change="handleSizeChange"
+				    @current-change="handleCurrentChange"
+				    :current-page="1"
+				    :page-sizes="[10,20,50,100]"
+				    :page-size="10"
+				    layout="total, sizes, prev, pager, next, jumper"
+				    :total="total">
+				</el-pagination>
+			</el-row>
+		</div>
+	</body>
+	<script src="../../js/config/config.js"></script>
+	<script src="../../js/config/tool.js"></script>
+	<script src="../js/report-manage.js"></script>
+</html>

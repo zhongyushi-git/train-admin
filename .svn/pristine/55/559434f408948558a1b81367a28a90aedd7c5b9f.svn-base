@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+		<!-- Google Chrome Frame也可以让IE用上Chrome的引擎: -->
+		<meta name="renderer" content="webkit">
+		<!--国产浏览器高速模式-->
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- 定义页面的最新版本 -->
+		<meta name="description" content="网站简介" />
+		<!-- 网站简介 -->
+		<meta name="keywords" content="搜索关键字，以半角英文逗号隔开" />
+		<title>大学生实习实训后台管理系统</title>
+
+
+		<link rel="stylesheet" type="text/css" href="css/base.css">
+		<link rel="stylesheet" type="text/css" href="css/frame_sys.css">
+		<link rel="stylesheet" type="text/css" href="css/iconfont.css">
+		<script type="text/javascript" src="framework/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="js/frame.js"></script>
+		<!--分页插件-->
+		<link rel="stylesheet" type="text/css" href="css/jquery.page.css">
+		<script type="text/javascript" src="framework/jquery.page.js"></script>
+
+		<!--自定义滚动条-->
+		<script type="text/javascript" src="framework/jquery-ui-1.10.4.min.js"></script>
+		<script type="text/javascript" src="framework/jquery.mousewheel.min.js"></script>
+		<script type="text/javascript" src="framework/jquery.mCustomScrollbar.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/jquery.mCustomScrollbar.css">
+		<style>
+			.menuList .menu2 .menuli2 .menua2 {
+				font-size: 13px;
+			}
+			#mainIframe{
+				height: calc(100vh - 190px);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="top">
+			<p>
+				<font style="font-size: 25px;">大学生实习实训后台管理系统</font>
+			</p>
+			<span>
+				<a class="but" href=""><i class="iconfont">&#xe6a3;</i>退出系统</a>
+				<a>欢迎您，系统管理员</a>
+			</span>
+		</div>
+
+		<div class="main">
+			<div class="menu">
+				<div class="menuList">
+					<ul class="menu1">
+						<li class="menuli1">
+							<a class="menua1" href="javascript:void(0)"><i class="iconfont left">&#xe713;</i>
+								<p>用户管理</p><i class="iconfont right">&#xe608;</i>
+							</a>
+							<ul class="menu2">
+								<li class="menuli2">
+									<a class="menua2" href="javascript:menu_ajax('admin/html/student-manage.html', '用户管理,学生信息管理')">
+										<i class="menua2_ico"><span></span></i>学生信息管理
+									</a>
+								</li>
+								<li class="menuli2">
+									<a class="menua2" href="javascript:menu_ajax('admin/html/teacher-manage.html', '用户管理,教师信息管理')">
+										<i class="menua2_ico"><span></span></i>教师信息管理
+									</a>
+								</li>
+								<li class="menuli2">
+									<a class="menua2" href="javascript:menu_ajax('admin/html/instructor-manage.html', '用户管理,辅导员信息管理')">
+										<i class="menua2_ico"><span></span></i>辅导员信息管理
+									</a>
+								</li>
+								<li class="menuli2">
+									<a class="menua2" href="javascript:menu_ajax('admin/html/engineer-manage.html', '用户管理,企业工程师信息管理')">
+										<i class="menua2_ico"><span></span></i>企业工程师信息管理
+									</a>
+								</li>
+							</ul>
+						</li>
+						<li class="menuli1">
+							<a class="menua1" href="javascript:menu_ajax('admin/html/attend-manage.html', '考勤管理')">
+								<i class="iconfont left">&#xe66b;</i>
+								<p>考勤管理</p>
+							</a>
+						</li>
+						<li class="menuli1">
+							<a class="menua1" href="javascript:menu_ajax('admin/html/score-manage.html', '成绩管理')">
+								<i class="iconfont left">&#xe60d;</i>
+								<p>成绩管理</p>
+							</a>
+						</li>
+						<li class="menuli1">
+							<a class="menua1" href="javascript:menu_ajax('admin/html/report-mamage.html', '实训报告管理')">
+								<i class="iconfont left">&#xe6da;</i>
+								<p>实训报告管理</p>
+							</a>
+						</li>
+						<li class="menuli1">
+							<a class="menua1" href="javascript:void(0)"><i class="iconfont left">&#xe607;</i>
+								<p>学情预警</p><i class="iconfont right">&#xe608;</i>
+							</a>
+							<ul class="menu2">
+								<li class="menuli2">
+									<a class="menua2" href="javascript:menu_ajax('admin/html/study-earnWraning.html', '学情预警,预警管理')">
+										<i class="menua2_ico"><span></span></i>预警管理
+									</a>
+								</li>
+								<li class="menuli2">
+									<a class="menua2" href="javascript:menu_ajax('admin/html/emailList.html', '学情预警,邮件记录')">
+										<i class="menua2_ico"><span></span></i>邮件记录
+									</a>
+								</li>
+							</ul>
+						</li>
+						<li class="menuli1">
+							<a class="menua1" href="javascript:void(0)"><i class="iconfont left">&#xe711;</i>
+								<p>系统管理</p><i class="iconfont right">&#xe608;</i>
+							</a>
+							<ul class="menu2">
+								<li class="menuli2">
+									<a class="menua2" href="javascript:menu_ajax('admin/html/systemLog-manage.html', '系统管理,日志管理')">
+										<i class="menua2_ico"><span></span></i>日志管理
+									</a>
+								</li>
+								<li class="menuli2">
+									<a class="menua2" href="javascript:menu_ajax('admin/html/term-manage.html', '系统管理,学期管理')">
+										<i class="menua2_ico"><span></span></i>学期管理
+									</a>
+								</li>
+								<li class="menuli2">
+									<a class="menua2" href="javascript:menu_ajax('admin/html/class-manage.html', '系统管理,班级管理')">
+										<i class="menua2_ico"><span></span></i>班级管理
+									</a>
+								</li>
+								<li class="menuli2">
+									<a class="menua2" href="javascript:menu_ajax('admin/html/ratio-manage.html', '系统管理,成绩比例管理')">
+										<i class="menua2_ico"><span></span></i>成绩比例管理
+									</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="main_body">
+				<div class="main_body_title">
+					<font>后台主页</font>
+				</div>
+				<div class="main_body_con">
+					<iframe id="mainIframe" src="admin/index.html" scrolling="no"></iframe>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="copyright">
+			Copyright©2016-2020 大学生实习实训后台管理系统
+		</div>
+
+
+		<script>
+			$(".menu").mCustomScrollbar({
+				scrollButtons: {
+					enable: false,
+					scrollType: "continuous",
+					scrollSpeed: 20,
+					scrollAmount: 40
+				},
+				horizontalScroll: false
+			});
+			$(".main_body_con").mCustomScrollbar({
+				scrollButtons: {
+					enable: false,
+					scrollType: "continuous",
+					scrollSpeed: 20,
+					scrollAmount: 40
+				},
+				horizontalScroll: false
+			});
+		</script>
+	</body>
+</html>

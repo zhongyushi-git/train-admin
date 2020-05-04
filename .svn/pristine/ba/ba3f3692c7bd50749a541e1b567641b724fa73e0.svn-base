@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>学期信息管理</title>
+		<link rel="stylesheet" href="../../js/element/index.css">
+		<script src="../../js/vue/vue.js"></script>
+		<script src="../../js/vue/axios.min.js"></script>
+		<script src="../../js/element/index.js"></script>
+		<style>
+			.text-title{
+				line-height: 32px;
+				float: right;
+			}
+			.right{
+				float: right;
+			}
+			.el-form-item {
+			    margin-bottom: 10px;
+			}
+			.el-dialog__body {
+			    padding: 10px 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<!-- 顶部-->
+			<el-row>
+				<el-col :span="20">&nbsp;</el-col>
+				<el-col :span="4">
+					<el-button type="primary" size="small" @click="addInfo">添加</el-button>
+					<el-button type="success" size="small" @click="updateInfo">修改</el-button>
+					<el-button type="warning" size="small" @click="checkDel">删除</el-button>
+				</el-col>
+			</el-row>
+			<br>
+			<!-- 表格栏 -->
+			<el-row>
+				 <el-table 
+				    ref="multipleTable"
+				    :data="datas"
+					stripe
+					border
+					max-height="430px"
+					size="small"
+					@selection-change="handleSelectionChange"
+					@row-click="handleRowClick"
+				    style="width: 100%">
+					<el-table-column
+					    type="selection"
+					    width="55">
+					</el-table-column> 
+					<el-table-column
+					   prop="term_id"
+					   label="学期id">
+					</el-table-column>
+					<el-table-column
+				        prop="term"
+				        label="学期名称">
+				    </el-table-column>
+				    <el-table-column
+				        prop="term_start"
+				        label="学期开始时间"
+						 width="170">
+				    </el-table-column>
+					<el-table-column
+					    prop="term_end"
+					    label="学期结束时间"
+						 width="170">
+					</el-table-column>
+					<el-table-column
+					  	prop="last_time"
+					  	label="最后一次修改时间"
+						width="170">
+					</el-table-column>
+					<el-table-column
+						prop="term_remark"
+						label="备注信息">
+					</el-table-column>
+				</el-table>
+			</el-row>
+			<!-- 分页 -->
+			<el-row>
+				<el-pagination
+					@size-change="handleSizeChange"
+				    @current-change="handleCurrentChange"
+				    :current-page="1"
+				    :page-sizes="[10,20,50,100]"
+				    :page-size="10"
+				    layout="total, sizes, prev, pager, next, jumper"
+				    :total="total">
+				</el-pagination>
+			</el-row>
+			<!-- 弹框 -->
+			<el-dialog title="编辑学期信息" :visible.sync="dialogVisible" width="30%">
+			  <el-form :label-position="labelPosition" :model="form" label-width="120px" @close="clearForm">
+			    <el-form-item label="学期id:">
+			      <el-input size="small" v-model="form.term_id" :disabled="isAdd"></el-input>
+			    </el-form-item>
+			    <el-form-item label="学期名称:">
+			      <el-input size="small" v-model="form.term"></el-input>
+			    </el-form-item>
+				<el-form-item label="学期开始时间:">
+				    <el-date-picker
+						size="small"
+						style="width: 230px;"
+				        v-model="form.term_start"
+				        type="datetime"
+				        placeholder="学期开始时间"
+				        default-time="00:00:00"
+						value-format="yyyy-MM-dd HH:mm:ss">
+				    </el-date-picker> 
+				</el-form-item>
+				<el-form-item label="学期结束时间:">
+					<el-date-picker
+						size="small"
+						style="width: 230px;"
+					    v-model="form.term_end"
+					    type="datetime"
+					    placeholder="学期结束时间"
+					    default-time="23:59:59"
+						value-format="yyyy-MM-dd HH:mm:ss">
+					</el-date-picker>
+				</el-form-item>
+				<el-form-item label="备注信息:">
+				    <el-input 
+					   type="textarea"  
+					   :rows="2" 
+					   size="small" 
+					   v-model="form.term_remark" 
+					   placeholder="请输入备注信息">
+					</el-input>
+				</el-form-item>
+			  </el-form>
+			  <div slot="footer" class="dialog-footer">
+			    <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+			    <el-button type="primary" size="small" @click="saveForm">确 定</el-button>
+			  </div>
+			</el-dialog>
+		</div>
+	</body>
+	<script src="../../js/config/config.js"></script>
+	<script src="../../js/config/tool.js"></script>
+	<script src="../js/term-manage.js"></script>
+</html>

@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>后台首页</title>
+	</head>
+	<body>
+		欢迎来到后台管理系统
+		<p>服务器运行情况</p>
+	</body>
+</html>

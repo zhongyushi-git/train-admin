@@ -1,0 +1,7 @@
+var WebAPI={
+	'student':'../../../training/student/',
+	'teacher':'../../../training/teacher/',
+	'engineer':'../../../training/engineer/',
+	'instructor':'../../../training/instructor/',
+	'manage':'../../../training/manage/',
+}

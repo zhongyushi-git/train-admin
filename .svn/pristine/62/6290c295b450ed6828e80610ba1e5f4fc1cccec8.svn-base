@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>后台首页</title>
+		<link rel="stylesheet" href="../js/element/index.css">
+		<script src="../js/vue/vue.js"></script>
+		<script src="../js/vue/axios.min.js"></script>
+		<script src="../js/element/index.js"></script>
+		<script src="../js/config/config.js"></script>
+		<style>
+			.span-space{
+				margin-left: 30px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<h4>服务器磁盘使用情况：</h4>
+			<dvi v-for="(item,index) in diskData">
+				<el-divider></el-divider>
+				<el-progress type="circle"  :percentage="item.percent | delPercent" :key="index"></el-progress>
+				<div>
+					<span>磁盘名称：{{item.path}}</span>
+					<span class="span-space">磁盘总量：{{item.totalSpace}}</span>
+					<span class="span-space">已用内存：{{item.usableSpace}}</span>
+					<span class="span-space">剩余内存：{{item.freeSpace}}</span>
+				</div>	
+			</dvi>
+		</div>
+
+		<script>
+			var app = new Vue({
+				el: '#app',
+				data: {
+					diskData: []
+				},
+				created() {
+					this.getConfig()
+				},
+				methods: {
+					getConfig() {
+						var that = this
+						axios.get(WebAPI.manage + 'disk/config')
+							.then(res => {
+								that.diskData = res.data
+								console.log(res)
+							}, err => {
+								console.log(err)
+							})
+					}
+				},
+				filters: {
+					delPercent(data) {
+						return data.replace(/%/g, '')
+					},
+					formatSpace(data){
+						return data + ''
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

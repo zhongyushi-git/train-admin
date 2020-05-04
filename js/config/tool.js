@@ -1,0 +1,195 @@
+// 创建Base64对象,对字符串进行加密
+var Base64 = {
+    _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+    encode: function (e) {
+        var t = "";
+        var n, r, i, s, o, u, a;
+        var f = 0;
+        e = Base64._utf8_encode(e.toString());
+        while (f < e.length) {
+            n = e.charCodeAt(f++);
+            r = e.charCodeAt(f++);
+            i = e.charCodeAt(f++);
+            s = n >> 2;
+            o = (n & 3) << 4 | r >> 4;
+            u = (r & 15) << 2 | i >> 6;
+            a = i & 63;
+            if (isNaN(r)) {
+                u = a = 64
+            } else if (isNaN(i)) {
+                a = 64
+            }
+            t = t + this._keyStr.charAt(s) + this._keyStr.charAt(o) + this._keyStr.charAt(u) + this._keyStr.charAt(a)
+        }
+        return t
+    },
+    decode: function (e) {
+        var t = "";
+        var n, r, i;
+        var s, o, u, a;
+        var f = 0;
+        e = e.replace(/[^A-Za-z0-9+/=]/g, "");
+        while (f < e.length) {
+            s = this._keyStr.indexOf(e.charAt(f++));
+            o = this._keyStr.indexOf(e.charAt(f++));
+            u = this._keyStr.indexOf(e.charAt(f++));
+            a = this._keyStr.indexOf(e.charAt(f++));
+            n = s << 2 | o >> 4;
+            r = (o & 15) << 4 | u >> 2;
+            i = (u & 3) << 6 | a;
+            t = t + String.fromCharCode(n);
+            if (u != 64) {
+                t = t + String.fromCharCode(r)
+            }
+            if (a != 64) {
+                t = t + String.fromCharCode(i)
+            }
+        }
+        t = Base64._utf8_decode(t);
+        return t
+    },
+    _utf8_encode: function (e) {
+        e = e.replace(/rn/g, "n");
+        var t = "";
+        for (var n = 0; n < e.length; n++) {
+            var r = e.charCodeAt(n);
+            if (r < 128) {
+                t += String.fromCharCode(r)
+            } else if (r > 127 && r < 2048) {
+                t += String.fromCharCode(r >> 6 | 192);
+                t += String.fromCharCode(r & 63 | 128)
+            } else {
+                t += String.fromCharCode(r >> 12 | 224);
+                t += String.fromCharCode(r >> 6 & 63 | 128);
+                t += String.fromCharCode(r & 63 | 128)
+            }
+        }
+        return t
+    },
+    _utf8_decode: function (e) {
+        var t = "";
+        var n = 0;
+        var r = c1 = c2 = 0;
+        while (n < e.length) {
+            r = e.charCodeAt(n);
+            if (r < 128) {
+                t += String.fromCharCode(r);
+                n++
+            } else if (r > 191 && r < 224) {
+                c2 = e.charCodeAt(n + 1);
+                t += String.fromCharCode((r & 31) << 6 | c2 & 63);
+                n += 2
+            } else {
+                c2 = e.charCodeAt(n + 1);
+                c3 = e.charCodeAt(n + 2);
+                t += String.fromCharCode((r & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
+                n += 3
+            }
+        }
+        return t
+    }
+}
+
+//格式化日期
+function dateFormat(fmt, date) {
+    if (date != '') {
+        let ret;
+        const opt = {
+            "Y+": date.getFullYear().toString(), // 年
+            "m+": (date.getMonth() + 1).toString(), // 月
+            "d+": date.getDate().toString(), // 日
+            "H+": date.getHours().toString(), // 时
+            "M+": date.getMinutes().toString(), // 分
+            "S+": date.getSeconds().toString() // 秒
+            // 有其他格式化字符需求可以继续添加，必须转化成字符串
+        };
+        for (let k in opt) {
+            ret = new RegExp("(" + k + ")").exec(fmt);
+            if (ret) {
+                fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+            }
+            ;
+        }
+        ;
+    } else {
+        fmt = 'date不能为空'
+    }
+    return fmt;
+}
+
+//计算前几天,f传null是默认只算日期,传入0表示计算到分钟,传1计算到秒
+function preDate(f, day) {
+    var date = new Date();
+    var y = date.getFullYear();
+    var m = date.getMonth();
+    var d = date.getDate();
+    var hours = date.getHours() + ":" + date.getMinutes();
+    var ss = date.getSeconds();
+    if (ss < 10) {
+        ss = "0" + ss;
+    }
+    var days = 0;
+    var start = '';
+    if (m == 0) {
+        if (d <= day) {
+            y = y - 1;
+            days = new Date(y, 12, 0).getDate();
+            start = y + '-' + 12 + '-' + (days - day + 1 + d);
+        } else {
+            start = y + '-' + (m + 1) + '-' + (d - day);
+        }
+    } else {
+        if (d <= day) {
+            days = new Date(y, m, 0).getDate();
+            start = y + '-' + m + '-' + (days - day + 1 + d);
+        } else {
+            start = y + '-' + (m + 1) + '-' + (d - day);
+        }
+    }
+    if (f == null) {
+        return start;
+    } else if (f == 0) {
+        return start + " " + hours;
+    } else if (f == 1) {
+        return start + " " + hours + ":" + ss;
+    }
+}
+
+//数字(小数)验证
+function checkDigit(value) {
+    var re = /^\d+(?=\.{0,1}\d+$|$)/;
+    var message = "";
+    if (!re.test(value)) {
+        message = "请输入正确的数字";
+    } else if (value > 100 || value < 0) {
+        message = "分数在0-100之间";
+    }
+    return message;
+}
+
+//整数验证
+function checkInteger(value) {
+    var reg = /^[0-9]*[1-9][0-9]*$/;
+    if (!reg.test(value)) {
+        return false;
+    }
+    return true;
+}
+
+//手机号验证
+function checkPhone(value) {
+    var reg = /^1[3456789]\d{9}$/;
+    if (!reg.test(value)) {
+        return false;
+    }
+    return true;
+}
+
+//邮箱验证
+function checkEmail(value) {
+    var reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+    if (!reg.test(value)) {
+        return false;
+    }
+    return true;
+}
